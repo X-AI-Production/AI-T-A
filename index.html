@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI T&A — 상상을 가장 빠르게 시각화하는 AI T&A</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+
+  :root{
+    --bg:#0a0a0a; --ink:#ffffff; --muted:#a3a3a3; --faint:#6f6f6f;
+    --line:#232323; --line-hi:#3a3a3a; --acid:#c9ff2e; --card:#111; --maxw:1280px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Pretendard','Pretendard Variable',-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 40px}
+  ::selection{background:var(--acid);color:#000}
+  .mono{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .mono .acid{color:var(--acid)}
+
+  /* nav */
+  header{position:sticky;top:0;z-index:60;background:rgba(10,10,10,.78);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  nav{display:flex;align-items:center;justify-content:space-between;height:70px;max-width:var(--maxw);margin:0 auto;padding:0 40px}
+  .logo{font-weight:900;font-size:19px;letter-spacing:.02em;display:flex;align-items:center;gap:9px}
+  .logo small{font-size:11px;font-weight:600;letter-spacing:.18em;color:var(--faint)}
+  .nav-right{display:flex;align-items:center;gap:28px}
+  .nav-links{display:flex;gap:26px;font-size:13px;letter-spacing:.06em;color:var(--muted);font-weight:600}
+  .nav-links a{transition:color .2s}.nav-links a:hover{color:var(--acid)}
+  .nav-cta{font-size:13px;font-weight:800;letter-spacing:.04em;padding:10px 18px;background:var(--acid);color:#000;border-radius:2px;transition:transform .15s;white-space:nowrap}
+  .nav-cta:hover{transform:translateY(-1px)}
+  .hamburger{display:none;background:none;border:none;color:var(--ink);cursor:pointer;width:44px;height:44px;place-items:center}
+  @media(max-width:960px){.nav-links,.nav-cta{display:none}.hamburger{display:grid}.wrap,nav{padding-left:22px;padding-right:22px}}
+
+  .mobile-menu{position:fixed;inset:0;z-index:100;background:rgba(9,9,9,.98);backdrop-filter:blur(10px);display:flex;flex-direction:column;justify-content:center;padding:40px 30px;transform:translateY(-102%);transition:transform .4s cubic-bezier(.6,0,.2,1);opacity:0;pointer-events:none}
+  .mobile-menu.open{transform:none;opacity:1;pointer-events:auto}
+  .mobile-menu a{font-size:32px;font-weight:800;letter-spacing:-.01em;padding:14px 0;border-bottom:1px solid var(--line);transition:color .2s}
+  .mobile-menu a:active,.mobile-menu a:hover{color:var(--acid)}
+  .mobile-menu .mm-cta{color:var(--acid)}
+  .mm-close{position:absolute;top:22px;right:22px;background:none;border:none;color:var(--ink);cursor:pointer;width:44px;height:44px;display:grid;place-items:center}
+
+  /* hero */
+  .hero{padding:72px 0 76px;position:relative}
+  .hero .label{margin-bottom:26px}
+  .hero h1{font-size:clamp(48px,10.4vw,150px);font-weight:900;line-height:.86;letter-spacing:-.035em;text-transform:uppercase}
+  .hero h1 em{font-style:normal;color:var(--acid)}
+  .hero .sub{margin-top:30px;font-size:clamp(15.5px,1.9vw,19px);color:var(--muted);max-width:640px}
+  .hero .sub b{color:var(--ink);font-weight:600}
+  .hero-cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .btn{font-size:14px;font-weight:800;letter-spacing:.04em;padding:15px 26px;border-radius:2px;cursor:pointer;border:1px solid var(--line-hi);transition:all .18s;display:inline-flex;align-items:center;gap:9px}
+  .btn.primary{background:var(--acid);color:#000;border-color:var(--acid)}
+  .btn.primary:hover{transform:translateY(-2px)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{border-color:var(--acid);color:var(--acid)}
+
+  /* section scaffold */
+  .sec{padding:110px 0;border-top:1px solid var(--line)}
+  .sec-head{max-width:760px;margin-bottom:52px}
+  .sec-head .num{font-size:13px;color:var(--acid);letter-spacing:.2em;font-weight:700;margin-bottom:18px}
+  .sec-head h2{font-size:clamp(28px,4.6vw,52px);font-weight:900;letter-spacing:-.025em;line-height:1.04}
+  .sec-head p{margin-top:18px;font-size:16px;color:var(--muted);max-width:600px}
+
+  /* about */
+  .about{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+  .about .big{font-size:clamp(16px,1.9vw,19px);color:var(--muted);line-height:1.7}
+  .about .big b{color:var(--ink);font-weight:600}
+  .about .big .acid{color:var(--acid)}
+  .plist{display:flex;flex-direction:column}
+  .pitem{display:grid;grid-template-columns:44px 1fr;gap:6px 18px;padding:24px 0;border-top:1px solid var(--line)}
+  .pitem:last-child{border-bottom:1px solid var(--line)}
+  .pitem .pn{font-size:13px;color:var(--acid);font-weight:700;letter-spacing:.1em;padding-top:4px}
+  .pitem h4{font-size:19px;font-weight:800;margin-bottom:6px;transition:color .2s}
+  .pitem:hover h4{color:var(--acid)}
+  .pitem p{font-size:14.5px;color:var(--muted)}
+  @media(max-width:820px){.about{grid-template-columns:1fr;gap:30px}}
+
+  /* capabilities rows */
+  .caprow{display:grid;grid-template-columns:96px 1.1fr 1.4fr auto;gap:30px;align-items:center;padding:34px 0;border-top:1px solid var(--line);transition:background .2s;position:relative}
+  .caprow:last-child{border-bottom:1px solid var(--line)}
+  .caprow:hover{background:linear-gradient(90deg,rgba(201,255,46,.05),transparent)}
+  .caprow .cn{font-size:14px;color:var(--faint);font-weight:700;letter-spacing:.1em}
+  .caprow:hover .cn{color:var(--acid)}
+  .cbadge{display:inline-block;margin-top:10px;font-size:10px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border:1px solid var(--line-hi);color:var(--muted);border-radius:2px}
+  .cbadge.core{border-color:var(--acid);color:var(--acid)}
+  .caprow h3{font-size:clamp(20px,2.6vw,30px);font-weight:800;letter-spacing:-.02em;transition:color .2s}
+  .caprow:hover h3{color:var(--acid)}
+  .caprow h3 small{display:block;font-size:12px;letter-spacing:.18em;color:var(--faint);font-weight:700;margin-bottom:8px;text-transform:uppercase}
+  .caprow p{font-size:14.5px;color:var(--muted)}
+  .caprow .tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .caprow .tags span{font-size:12px;color:var(--muted);border:1px solid var(--line-hi);padding:5px 11px;border-radius:2px;white-space:nowrap}
+  @media(max-width:900px){.caprow{grid-template-columns:1fr;gap:12px 16px}.caprow .cn{display:flex;align-items:center;gap:12px}.cbadge{margin-top:0}.caprow .tags{justify-content:flex-start}}
+
+  /* team */
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .role{background:var(--bg);padding:28px 26px;transition:background .2s}
+  .role:hover{background:#0f0f0f}
+  .role .rc{font-size:13px;color:var(--acid);font-weight:700;letter-spacing:.1em;margin-bottom:14px}
+  .role h4{font-size:16.5px;font-weight:800;margin-bottom:7px;transition:color .2s}
+  .role:hover h4{color:var(--acid)}
+  .role p{font-size:13.5px;color:var(--faint)}
+  @media(max-width:820px){.roles{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.roles{grid-template-columns:1fr}.role{padding:22px 22px}}
+
+  /* works — showcase (layout kept) */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:34px}
+  .chip{font-size:13px;font-weight:700;letter-spacing:.04em;padding:9px 17px;border:1px solid var(--line-hi);border-radius:2px;color:var(--muted);cursor:pointer;background:transparent;transition:all .18s;font-family:inherit}
+  .chip:hover{color:var(--ink)}
+  .chip.active{background:var(--acid);color:#000;border-color:var(--acid)}
+  @media(max-width:600px){.filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}.chip{white-space:nowrap;flex:0 0 auto}}
+  .showcase{display:block}
+  @keyframes stageIn{from{opacity:.3}to{opacity:1}}
+  .showcase.swap{animation:stageIn .38s ease}
+  .yt-out{position:absolute;top:14px;right:14px;z-index:4;font-size:11px;font-weight:800;letter-spacing:.04em;padding:6px 11px;background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:2px;transition:all .18s}
+  .yt-out:hover{background:var(--acid);color:#000;border-color:var(--acid)}
+  .ip-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+  .ip-head .t{font-size:13px;letter-spacing:.14em;color:var(--acid);font-weight:800}
+  .ip-head .d{font-size:13px;color:var(--faint)}
+  .ip-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .ip-info{margin-top:18px}
+  .ip-info .st-badges{margin-bottom:12px}
+  .ip-info h3{font-size:clamp(20px,2.4vw,27px);font-weight:900;letter-spacing:-.02em;margin-bottom:6px}
+  .ip-info .genre{font-size:12.5px;color:var(--acid);font-weight:700;letter-spacing:.04em;margin-bottom:11px}
+  .ip-info p{font-size:14px;color:var(--muted)}
+  @media(max-width:820px){.ip-grid{grid-template-columns:1fr;gap:34px}}
+  .thumb{aspect-ratio:16/9;position:relative;overflow:hidden;display:grid;place-items:center;border:1px solid var(--line);border-radius:4px}
+  .thumb .noise{position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .thumb .yt-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+  .thumb .brand{position:relative;font-size:clamp(30px,5vw,58px);font-weight:900;color:rgba(255,255,255,.95);letter-spacing:.01em;z-index:2;text-shadow:0 2px 24px rgba(0,0,0,.4)}
+  .thumb .cat{position:absolute;top:14px;left:14px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;background:#000;color:var(--acid);border-radius:2px;z-index:3}
+  .thumb .play{position:absolute;bottom:16px;right:16px;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.5);border:1.5px solid rgba(255,255,255,.5);display:grid;place-items:center;z-index:3;transition:all .2s}
+  .thumb .play::after{content:"";width:0;height:0;border-left:14px solid #fff;border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:3px}
+  .stage-media{transition:opacity .3s ease}
+  @keyframes stageIn{from{opacity:.3}to{opacity:1}}
+  .stage-media.swap{animation:stageIn .38s ease}
+  .stage-info{margin-top:24px;display:grid;grid-template-columns:1fr auto;gap:18px 40px;align-items:start}
+  .st-badges{display:flex;gap:8px;flex-wrap:wrap;grid-column:1 / -1}
+  .st-badges span{font-size:11px;font-weight:800;letter-spacing:.06em;padding:5px 10px;border:1px solid var(--line-hi);border-radius:2px;color:var(--muted)}
+  .st-badges span.dev{border-color:var(--acid);color:var(--acid)}
+  .st-index{font-size:13px;letter-spacing:.14em;color:var(--faint);font-weight:700;display:flex;align-items:baseline;gap:9px}
+  .st-index b{color:var(--acid);font-size:24px;font-weight:900;letter-spacing:0;line-height:1}
+  .stage-info h3{font-size:clamp(23px,3vw,34px);font-weight:900;letter-spacing:-.02em;margin-bottom:9px}
+  .st-role{font-size:13.5px;color:var(--acid);font-weight:600;margin-bottom:13px}
+  .stage-info p.st-desc{font-size:15px;color:var(--muted);max-width:640px}
+  .st-meta{display:flex;flex-direction:column;gap:12px;text-align:right;min-width:180px}
+  .st-meta .m{font-size:12.5px;color:var(--faint)}
+  .st-meta .m b{display:block;color:var(--ink);font-weight:700;font-size:13.5px;margin-top:2px}
+  @media(max-width:720px){.stage-info{grid-template-columns:1fr}.st-meta{text-align:left;flex-direction:row;flex-wrap:wrap;gap:18px}}
+
+  /* process */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr)}
+  .step{padding:0 22px 0 0;position:relative}
+  .step .n{font-size:13px;color:var(--acid);font-weight:700;letter-spacing:.1em;margin-bottom:20px;padding-top:20px;border-top:2px solid var(--acid);display:inline-block;min-width:60px}
+  .step h4{font-size:17px;font-weight:800;margin-bottom:8px;transition:color .2s}
+  .step:hover h4{color:var(--acid)}
+  .step p{font-size:13.5px;color:var(--muted)}
+  .flow-note{margin-top:34px;font-size:13px;color:var(--faint)}
+  .flow-note b{color:var(--acid);font-weight:700;letter-spacing:.04em}
+  @media(max-width:820px){
+    .flow{grid-template-columns:1fr;gap:0;border-left:2px solid var(--line);margin-left:6px}
+    .step{padding:20px 0 20px 26px;position:relative}
+    .step .n{border-top:none;padding-top:0;margin-bottom:8px}
+    .step::before{content:"";position:absolute;left:-7px;top:24px;width:12px;height:12px;border-radius:50%;background:var(--acid)}
+  }
+
+  /* why */
+  .why{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .wcell{background:var(--bg);padding:34px 30px}
+  .wcell .wk{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--acid);margin-bottom:14px}
+  .wcell h4{font-size:18.5px;font-weight:800;margin-bottom:8px}
+  .wcell p{font-size:14.3px;color:var(--muted)}
+  .wcell.hl{background:var(--acid);color:#000;grid-column:1 / -1}
+  .wcell.hl .q{font-size:clamp(19px,2.4vw,24px);font-weight:800;line-height:1.4;letter-spacing:-.01em}
+  .wcell.hl .qs{margin-top:16px;font-size:14.5px;font-weight:500;max-width:760px}
+  @media(max-width:720px){.why{grid-template-columns:1fr}}
+
+  footer{border-top:1px solid var(--line);padding:44px 0}
+  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;color:var(--faint);font-size:13px}
+  .foot-links{display:flex;gap:22px;flex-wrap:wrap}
+  .foot-links a{transition:color .2s}.foot-links a:hover{color:var(--acid)}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  .k{color:var(--acid)}
+
+  /* responsive section padding */
+  @media(max-width:820px){.sec,.cta{padding:72px 0}.hero{padding:56px 0 60px}.hero .sub{max-width:none}.hero-cta .btn{flex:1;justify-content:center}}
+  @media(max-width:520px){.sec,.cta{padding:60px 0}}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">AI T&A</div>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#about">ABOUT</a>
+        <a href="#capabilities">SERVICES</a>
+        <a href="#works">WORKS</a>
+        <a href="#process">PROCESS</a>
+        <a href="#why">WHY US</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="메뉴 열기">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mm-close" id="mmClose" aria-label="메뉴 닫기">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <a href="#about">ABOUT</a>
+  <a href="#capabilities">SERVICES</a>
+  <a href="#works">WORKS</a>
+  <a href="#process">PROCESS</a>
+  <a href="#why">WHY US</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <h1>VISUALIZE<br><em>FASTER</em> THAN<br>IMAGINATION</h1>
+    <p class="sub" style="max-width:none"><b>콘텐츠 연출 경험과 생성형 AI 기술을 결합해, 아이디어를 빠르게 검증하고 제작 가능한 화면으로 완성합니다.</b></p>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="sec" id="about">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">01 — ABOUT</div>
+      <h2>아이디어를<br>제작 가능한 화면으로</h2>
+    </div>
+    <div class="about">
+      <div class="big reveal"><b>AI T&A은 콘텐츠 연출 경험과 생성형 AI 기술을 결합해, 아이디어를 빠르게 검증하고 실제 콘텐츠로 연결하는 프로덕션 조직입니다.</b> 촬영 전 프리비즈부터 브랜드 콘텐츠, 고난도 AI 생성 장면과 <span class="acid">4DX·ScreenX 포맷 연구</span>까지 프로젝트의 목적과 제작 조건에 맞는 방식을 설계합니다.</div>
+      <div class="plist reveal">
+        <div class="pitem"><div class="pn">A</div><div><h4>빠른 시각화</h4><p>촬영 전 룩·컷·카메라와 주요 시퀀스를 시각화해 제작 방향을 빠르게 검토하고 합의합니다.</p></div></div>
+        <div class="pitem"><div class="pn">B</div><div><h4>콘텐츠 제작</h4><p>브랜드 영상과 숏폼부터 고난도 장면까지 기획, AI 생성과 후반 작업을 연결해 완성합니다.</p></div></div>
+        <div class="pitem"><div class="pn">C</div><div><h4>특수 포맷 R&D</h4><p>4DX·ScreenX 경험을 고려한 콘텐츠와 새로운 AI 제작 워크플로를 연구하고 실제 프로젝트를 통해 검증합니다.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAPABILITIES -->
+<section class="sec" id="capabilities">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">02 — CAPABILITIES</div>
+      <h2>우리가 하는 일</h2>
+      <p style="max-width:none">핵심 서비스부터 제작 솔루션, 미래 제작 방식 연구까지 — 프로젝트 단계 전체를 연결합니다.</p>
+    </div>
+
+    <div class="caprow reveal">
+      <div class="cn">01<div class="cbadge core">PRODUCTION</div></div>
+      <h3><small>PRE-VISUALIZATION</small>드라마·영화 프리비즈</h3>
+      <p>대본과 연출 의도를 바탕으로 주요 시퀀스의 룩·컷·카메라를 사전에 시각화합니다. 제작팀이 공유할 수 있는 <span class="k">비주얼 기준과 촬영 가이드</span>를 제공합니다.</p>
+      <div class="tags"><span>룩 개발</span><span>샷 설계</span><span>촬영 가이드</span></div>
+    </div>
+    <div class="caprow reveal">
+      <div class="cn">02<div class="cbadge">SOLUTION</div></div>
+      <h3><small>AI GENERATED SEQUENCE</small>고난도 장면 AI 제작</h3>
+      <p>촬영과 VFX 부담이 큰 액션·레이싱·폭발과 판타지 장면을 프로젝트의 <span class="k">일정과 예산에 맞는 AI 제작 방식</span>으로 구현합니다.</p>
+      <div class="tags"><span>고난도 액션</span><span>AI 생성</span><span>제작 대안</span></div>
+    </div>
+    <div class="caprow reveal">
+      <div class="cn">03<div class="cbadge">R&D</div></div>
+      <h3><small>IMMERSIVE R&D</small>AI·특수 포맷 연구</h3>
+      <p>새로운 생성형 AI 기술과 제작 워크플로를 연구하고, <span class="k">4DX·ScreenX 콘텐츠에 적용</span>할 수 있는 제작 방식을 검증합니다.</p>
+      <div class="tags"><span>워크플로 R&D</span><span>4DX</span><span>ScreenX</span></div>
+    </div>
+    <div class="caprow reveal">
+      <div class="cn">04<div class="cbadge core">CREATION</div></div>
+      <h3><small>AI CONTENT PRODUCTION</small>광고·브랜드 콘텐츠 제작</h3>
+      <p>브랜드 필름, 숏폼과 트레일러를 기획부터 AI 이미지·영상 생성, 편집과 후반 작업까지 <span class="k">하나의 크리에이티브 기준</span>으로 제작합니다.</p>
+      <div class="tags"><span>브랜드 필름</span><span>숏폼·릴스</span><span>트레일러</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="sec" id="team">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">03 — TEAM</div>
+      <h2>하나의 팀으로 연결되는<br>제작 역량</h2>
+      <p>기획·연출·AI 제작과 후반 작업 역량이 <span class="k">하나의 크리에이티브 기준</span> 안에서 연결됩니다.</p>
+    </div>
+    <div class="roles reveal">
+      <div class="role"><div class="rc">01</div><h4>크리에이티브 기획·대본</h4><p>콘셉트 개발, 스토리텔링, 트리트먼트와 대본 설계</p></div>
+      <div class="role"><div class="rc">02</div><h4>아트 디렉션·룩 개발</h4><p>비주얼 아이덴티티, 캐릭터와 컬러·톤앤매너 설계</p></div>
+      <div class="role"><div class="rc">03</div><h4>프리비즈·영상 연출</h4><p>컷 구성, 카메라 움직임과 주요 시퀀스 연출</p></div>
+      <div class="role"><div class="rc">04</div><h4>AI 이미지·영상 제작</h4><p>키프레임, 이미지·영상 생성과 일관성 관리</p></div>
+      <div class="role"><div class="rc">05</div><h4>편집·포스트프로덕션</h4><p>편집, 컴포지팅, 사운드와 최종 마스터링</p></div>
+      <div class="role"><div class="rc">06</div><h4>워크플로 설계·R&D</h4><p>제작 과정 최적화, 새로운 AI 기술 검증과 워크플로 개발</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SELECTED WORKS -->
+<section class="sec" id="works">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">04 — SELECTED WORKS</div>
+      <h2>프로젝트로 증명한 가능성</h2>
+      <p style="max-width:none">커머셜과 4DX 브랜드 필름, 숏폼부터 오리지널 IP까지. 실제 프로젝트에서 담당한 역할과 제작 방식을 소개합니다.</p>
+    </div>
+
+    <div class="filters">
+      <button class="chip active" data-f="aifilm">AI Film & Series</button>
+       <button class="chip" data-f="commercial">Commercial</button>
+      <button class="chip" data-f="brandfilm4dx">4DX Brand Film</button>
+      <button class="chip" data-f="longform">Long-form IP</button>
+      <button class="chip" data-f="shortform">Short-form</button>
+    </div>
+
+    <div class="showcase" id="showcase"></div>
+  </div>
+</section>
+
+<!-- HOW WE WORK -->
+<section class="sec" id="process">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">05 — HOW WE WORK</div>
+      <h2>아이디어에서<br>최종 콘텐츠까지</h2>
+      <p>기획부터 후반 작업까지 하나의 팀이 연결해 프로젝트의 의도와 비주얼 기준을 일관되게 이어갑니다.</p>
+    </div>
+    <div class="flow reveal">
+      <div class="step"><div class="n">01</div><h4>프로젝트 정의</h4><p>목적, 타깃, 채널, 일정과 필요한 결과물 확인</p></div>
+      <div class="step"><div class="n">02</div><h4>크리에이티브 기획</h4><p>콘셉트, 스토리, 레퍼런스와 룩 설정</p></div>
+      <div class="step"><div class="n">03</div><h4>프리비즈·사전 검증</h4><p>주요 컷, 카메라와 비주얼 방향 사전 제작</p></div>
+      <div class="step"><div class="n">04</div><h4>AI 제작·후반 작업</h4><p>AI 이미지·영상 생성, 편집, 컴포지팅과 사운드</p></div>
+      <div class="step"><div class="n">05</div><h4>최종 납품</h4><p>프로젝트별 채널과 포맷에 맞는 최종 마스터 제작</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="sec" id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="num">06 — WHY US</div>
+      <h2>기술보다 결과물을 먼저 생각합니다</h2>
+    </div>
+    <div class="why reveal">
+      <div class="wcell hl">
+        <div class="q">"AI를 보여주기 위한 프로덕션이 아니라, AI로 더 나은 결과물을 만드는 프로덕션."</div>
+        <div class="qs">기술 자체를 앞세우기보다 프로젝트가 전달해야 하는 이야기와 최종 결과물의 완성도를 먼저 생각합니다.</div>
+      </div>
+      <div class="wcell"><div class="wk">01 — DIRECTION FIRST</div><h4>연출 방향을 먼저 설계합니다</h4><p>AI는 제작을 위한 도구입니다. 프로젝트의 목적과 비주얼 방향을 먼저 정리한 뒤 적합한 기술을 선택합니다.</p></div>
+      <div class="wcell"><div class="wk">02 — FASTER ITERATION</div><h4>더 많은 가능성을 빠르게 검토합니다</h4><p>여러 룩과 연출안을 빠르게 시각화해 제작진과 파트너의 의사결정 속도를 높입니다.</p></div>
+      <div class="wcell"><div class="wk">03 — ONE CREATIVE STANDARD</div><h4>기획부터 후반 작업까지 연결합니다</h4><p>기획, 프리비즈, AI 생성과 편집이 하나의 비주얼 기준으로 이어집니다.</p></div>
+      <div class="wcell"><div class="wk">04 — IMMERSIVE EXPERIENCE</div><h4>화면 너머의 경험까지 고려합니다</h4><p>4DX·ScreenX 콘텐츠 경험을 기반으로 공간과 체감까지 고려한 제작 방식을 연구합니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div class="logo">AI T&A</div>
+    <div class="foot-links">
+      
+    </div>
+    <div>© 2026 AI T&A</div>
+  </div>
+</footer>
+
+<script>
+  const pad2=n=>String(n).padStart(2,'0');
+
+  const WORKS=[
+    {id:'kbo',cat:'COMMERCIAL',brand:'KBO',grad:'135deg,#2b2b2b,#0f0f0f',yt:'h8RRpYvhUPo',title:'KBO Brand Film',type:'CLIENT PROJECT',status:'RELEASED',role:'Concept · Production · Edit',desc:'브랜드 메시지를 짧은 러닝타임에 임팩트로 전달한 커머셜. 기획부터 제작까지 하나의 크리에이티브 기준으로 완성했습니다.',meta:[['ROLE','Concept · Production · Edit'],['OUTPUT','Brand Film']]},
+    {id:'brandfilm4dx',cat:'4DX BRAND FILM',brand:'4DX',grad:'135deg,#2a2333,#0f0f0f',yt:'35bKuPKSwlU',title:'4DX Brand Film',type:'CLIENT PROJECT',status:'RELEASED',role:'Concept · Production · Edit',desc:'4DX 포맷의 몰입 경험에 맞춰 연출·제작한 브랜드 필름입니다.',meta:[['ROLE','Concept · Production · Edit'],['OUTPUT','4DX Brand Film']]},
+    {id:'citizen',cat:'LONG-FORM IP',brand:'CITIZEN',grad:'135deg,#24283a,#0f0f0f',yt:'Gzx9yFVHI8o',title:'CITIZEN',genre:'하드보일드 누아르 · POV',type:'ORIGINAL IP',status:'IN DEVELOPMENT',role:'IP · Concept · Direction',desc:'50억이라는 각본에 속아 스스로 악마의 페르소나를 입은 한 남자가, 자신의 죽음조차 누군가의 유희였다는 지독한 사실을 깨닫는 순간까지를 그리는 POV형 하드보일드 누아르입니다.',meta:[['GENRE','하드보일드 누아르'],['FORMAT','ScreenX · 약 90분']]},
+    {id:'awake',cat:'LONG-FORM IP',brand:'AWAKE',grad:'135deg,#1f3330,#0f0f0f',yt:'tmNZcFi85XE',title:'AWAKE : 무채색 도시의 반란',genre:'감성 판타지 애니메이션',type:'ORIGINAL IP',status:'IN DEVELOPMENT',role:'IP · Concept · Character',desc:'AI 시대, 창작의 의미를 잃은 애니메이터가 미완성의 세계로 들어가 잃어버린 자신과 꿈을 되찾는 60분 감성 판타지 애니메이션입니다. 가상 세계를 여행하며 펼쳐지는 역동적인 모험과 풍부한 감정선을 4DX 모션과 환경 효과로 극대화한, 체감형 장편 애니메이션 영화입니다.',meta:[['GENRE','감성 판타지 애니메이션'],['FORMAT','4DX · 60분']]},
+    {id:'bibigo1',cat:'SHORT FORM',brand:'bibigo',grad:'135deg,#33262e,#0f0f0f',yt:'tu5x7e9y2GI',title:'bibigo Social Short 01',genre:'9:16 세로형',type:'CLIENT PROJECT',status:'RELEASED',role:'Concept · AI Video · Edit',desc:'세로형 소셜 규격에 맞춰 후킹 중심으로 제작한 브랜드 숏폼입니다.',meta:[['GENRE','Social Short'],['FORMAT','9:16']]},
+    {id:'bibigo2',cat:'SHORT FORM',brand:'bibigo',grad:'135deg,#2e2633,#0f0f0f',yt:'uC4rnrKzNTE',title:'bibigo Social Short 02',genre:'9:16 세로형',type:'CLIENT PROJECT',status:'RELEASED',role:'Concept · AI Video · Edit',desc:'세로형 소셜 규격에 맞춰 후킹 중심으로 제작한 브랜드 숏폼입니다.',meta:[['GENRE','Social Short'],['FORMAT','9:16']]}
+  ];
+  const byId=Object.fromEntries(WORKS.map(w=>[w.id,w]));
+  const CHIPS={aifilm:[],commercial:['kbo'],brandfilm4dx:['brandfilm4dx'],longform:['citizen','awake'],shortform:['bibigo1','bibigo2']};
+
+  const chips=[...document.querySelectorAll('.chip')];
+  const showcase=document.getElementById('showcase');
+
+  function badges(w){const dev=/DEVELOPMENT|CONFIDENTIAL|R&D/.test(w.status);return '<span>'+w.type+'</span><span class="'+(dev?'dev':'')+'">'+w.status+'</span>';}
+  function metaHTML(w){return w.meta.map(m=>'<div class="m">'+m[0]+'<b>'+m[1]+'</b></div>').join('');}
+  function posterInner(w){
+    return '<div class="noise"></div><div class="cat">'+w.cat+'</div>'
+      +(w.yt?'<img class="yt-thumb" alt="">':'<div class="brand">'+w.brand+'</div>')
+      +'<div class="play"></div>'
+      +(w.yt?'<a class="yt-out" href="https://youtu.be/'+w.yt+'" target="_blank" rel="noopener">YouTube ↗</a>':'');
+  }
+  function wireMedia(el,w){
+    el.style.background=w.yt?'#000':'linear-gradient('+w.grad+')';
+    el.style.cursor=w.yt?'pointer':'default';
+    el.innerHTML=posterInner(w);
+    if(w.yt){
+      const img=el.querySelector('.yt-thumb');
+      img.onerror=function(){img.onerror=null;img.src='https://img.youtube.com/vi/'+w.yt+'/hqdefault.jpg';};
+      img.src='https://img.youtube.com/vi/'+w.yt+'/maxresdefault.jpg';
+      el.querySelector('.yt-out').addEventListener('click',e=>e.stopPropagation());
+      el.addEventListener('click',function play(){
+        el.style.cursor='default';el.style.background='#000';
+        el.innerHTML='<iframe src="https://www.youtube.com/embed/'+w.yt+'?autoplay=1&rel=0&playsinline=1" title="'+w.title+'" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe><a class="yt-out" href="https://youtu.be/'+w.yt+'" target="_blank" rel="noopener">YouTube ↗</a>';
+        el.querySelector('.yt-out').addEventListener('click',e=>e.stopPropagation());
+      },{once:true});
+    }
+  }
+  function anim(){showcase.classList.remove('swap');void showcase.offsetWidth;showcase.classList.add('swap');}
+
+  function renderSingle(w,pos,tot){
+    showcase.classList.remove('is-group');
+    showcase.innerHTML='<div class="thumb stage-media"></div>'
+      +'<div class="stage-info"><div class="st-badges">'+badges(w)+'</div>'
+      +'<div><div class="st-index"><b>'+pad2(pos)+'</b> <span>/</span> <span>'+pad2(tot)+'</span></div>'
+      +'<h3>'+w.title+'</h3><div class="st-role">'+w.role+'</div><p class="st-desc">'+w.desc+'</p></div>'
+      +'<div class="st-meta">'+metaHTML(w)+'</div></div>';
+    wireMedia(showcase.querySelector('.stage-media'),w);
+    anim();
+  }
+  function renderGroup(list,label){
+    showcase.classList.add('is-group');
+    showcase.innerHTML='<div class="ip-head"><span class="t">'+label.toUpperCase()+'</span><span class="d">총 '+list.length+'편</span></div>'
+      +'<div class="ip-grid">'+list.map(w=>
+        '<div class="ip-item"><div class="thumb stage-media" data-id="'+w.id+'"></div>'
+        +'<div class="ip-info"><div class="st-badges">'+badges(w)+'</div><h3>'+w.title+'</h3>'
+        +(w.genre?'<div class="genre">'+w.genre+'</div>':'')
+        +'<p>'+w.desc+'</p></div></div>').join('')+'</div>';
+    showcase.querySelectorAll('.ip-item .stage-media').forEach(el=>wireMedia(el,byId[el.dataset.id]));
+    anim();
+  }
+
+  chips.forEach((c,i)=>c.addEventListener('click',()=>{
+    chips.forEach(x=>x.classList.remove('active'));c.classList.add('active');
+    const list=(CHIPS[c.dataset.f]||[]).map(id=>byId[id]);
+    if(list.length===0){showcase.classList.remove('is-group');showcase.innerHTML='<div class="ip-head"><span class="t">AI FILM & SERIES</span></div><div class="stage-info"><div><h3>FULL AI GENERATED</h3><p class="st-desc">AI로 전체 영상을 생성한 드라마·영화 프로젝트를 소개할 예정입니다.</p></div></div>';anim();}
+     else if(list.length>1)renderGroup(list,c.textContent);
+    else if(list.length===1)renderSingle(list[0],i+1,chips.length);
+  }));
+  chips[0].click();
+
+  // mobile menu
+  const mm=document.getElementById('mobileMenu');
+  document.getElementById('hamburger').addEventListener('click',()=>mm.classList.add('open'));
+  document.getElementById('mmClose').addEventListener('click',()=>mm.classList.remove('open'));
+  mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mm.classList.remove('open')));
+
+
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
