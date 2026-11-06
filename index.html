@@ -146,6 +146,12 @@
   .st-meta .m b{display:block;color:var(--ink);font-weight:700;font-size:13.5px;margin-top:2px}
   @media(max-width:720px){.stage-info{grid-template-columns:1fr}.st-meta{text-align:left;flex-direction:row;flex-wrap:wrap;gap:18px}}
 
+  .closing-panel{padding:clamp(26px,6vw,76px);border:1px solid var(--line-hi);border-top:2px solid var(--acid);background:var(--card)}
+  .closing-label{margin-bottom:20px;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.2em}
+  .closing-panel h2{font-size:clamp(27px,4.7vw,62px);font-weight:900;line-height:1.16;letter-spacing:-.035em;word-break:keep-all}
+  .closing-panel h2 span{display:block}
+  .closing-panel p{max-width:660px;margin-top:24px;color:var(--muted);font-size:clamp(15px,1.65vw,18px);line-height:1.75;word-break:keep-all}
+
   footer{border-top:1px solid var(--line);padding:44px 0}
   .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;color:var(--faint);font-size:13px}
   .foot-links{display:flex;gap:22px;flex-wrap:wrap}
@@ -286,6 +292,16 @@
     </div>
 
     <div class="showcase" id="showcase"></div>
+  </div>
+</section>
+
+<section class="sec closing" aria-labelledby="closing-title">
+  <div class="wrap">
+    <div class="closing-panel">
+      <div class="closing-label">AI T&amp;A</div>
+      <h2 id="closing-title"><span>제작 과정은 더 효율적으로,</span> <span class="k">결과물은 더 완성도 있게</span></h2>
+      <p>AI T&amp;A는 제작 효율과 콘텐츠 완성도를 함께 높일 수 있는 기술과 제작 방식을 연구합니다. 현장에서 검증한 방법을 도구와 시스템으로 정착시켜, 팀이 반복 작업을 줄이고 연출과 디테일에 더 집중할 수 있도록 합니다.</p>
+    </div>
   </div>
 </section>
 
