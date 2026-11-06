@@ -323,14 +323,15 @@
     {id:'dont-sleep',cat:'AI FILM & SERIES',yt:'4fLkXAkL9ss',title:"Don't Sleep",type:'ANIMATION',status:'FULL AI GENERATED',desc:'AI 애니메이션'},
     {id:'maeh',cat:'AI FILM & SERIES',yt:'7BCx2fiASlA',title:'MAEH',type:'ANIMATION',status:'FULL AI GENERATED',desc:'AI 애니메이션'},
     {id:'kbo',cat:'COMMERCIAL',brand:'KBO',grad:'135deg,#2b2b2b,#0f0f0f',yt:'h8RRpYvhUPo',title:'KBO Brand Film',type:'CLIENT PROJECT',status:'RELEASED',role:'Concept · Production · Edit',desc:'브랜드 메시지를 짧은 러닝타임에 임팩트로 전달한 커머셜. 기획부터 제작까지 하나의 크리에이티브 기준으로 완성했습니다.',meta:[['ROLE','Concept · Production · Edit'],['OUTPUT','Brand Film']]},
-    {id:'brandfilm4dx',cat:'4DX BRAND FILM',brand:'4DX',grad:'135deg,#2a2333,#0f0f0f',yt:'35bKuPKSwlU',title:'4DX Brand Film',type:'CLIENT PROJECT',status:'RELEASED',role:'Concept · Production · Edit',desc:'4DX 포맷의 몰입 경험에 맞춰 연출·제작한 브랜드 필름입니다.',meta:[['ROLE','Concept · Production · Edit'],['OUTPUT','4DX Brand Film']]},
+    {id:'brandfilm4dx',cat:'4DX BRAND FILM',brand:'4DX',grad:'135deg,#2a2333,#0f0f0f',yt:'35bKuPKSwlU',title:'Sky Dive',type:'CLIENT PROJECT',status:'RELEASED',role:'Concept · Production · Edit',desc:'4DX 포맷의 몰입 경험에 맞춰 연출·제작한 브랜드 필름입니다.',meta:[['ROLE','Concept · Production · Edit'],['OUTPUT','4DX Brand Film']]},
+    {id:'thumbelina',cat:'4DX BRAND FILM',brand:'4DX',grad:'135deg,#2a2333,#0f0f0f',yt:'6-LdkPVMwRU',title:'Thumbelina',type:'4DX BRAND FILM',status:'RELEASED',desc:'4DX 포맷으로 제작한 브랜드 필름입니다.'},
     {id:'citizen',cat:'LONG-FORM IP',brand:'CITIZEN',grad:'135deg,#24283a,#0f0f0f',yt:'Gzx9yFVHI8o',title:'CITIZEN',genre:'하드보일드 누아르 · POV',type:'ORIGINAL IP',status:'IN DEVELOPMENT',role:'IP · Concept · Direction',desc:'50억이라는 각본에 속아 스스로 악마의 페르소나를 입은 한 남자가, 자신의 죽음조차 누군가의 유희였다는 지독한 사실을 깨닫는 순간까지를 그리는 POV형 하드보일드 누아르입니다.',meta:[['GENRE','하드보일드 누아르'],['FORMAT','ScreenX · 약 90분']]},
     {id:'awake',cat:'LONG-FORM IP',brand:'AWAKE',grad:'135deg,#1f3330,#0f0f0f',yt:'tmNZcFi85XE',title:'AWAKE : 무채색 도시의 반란',genre:'감성 판타지 애니메이션',type:'ORIGINAL IP',status:'IN DEVELOPMENT',role:'IP · Concept · Character',desc:'AI 시대, 창작의 의미를 잃은 애니메이터가 미완성의 세계로 들어가 잃어버린 자신과 꿈을 되찾는 60분 감성 판타지 애니메이션입니다. 가상 세계를 여행하며 펼쳐지는 역동적인 모험과 풍부한 감정선을 4DX 모션과 환경 효과로 극대화한, 체감형 장편 애니메이션 영화입니다.',meta:[['GENRE','감성 판타지 애니메이션'],['FORMAT','4DX · 60분']]},
     {id:'bibigo1',cat:'SHORT FORM',brand:'bibigo',grad:'135deg,#33262e,#0f0f0f',yt:'tu5x7e9y2GI',title:'bibigo Social Short 01',genre:'9:16 세로형',type:'CLIENT PROJECT',status:'RELEASED',role:'Concept · AI Video · Edit',desc:'세로형 소셜 규격에 맞춰 후킹 중심으로 제작한 브랜드 숏폼입니다.',meta:[['GENRE','Social Short'],['FORMAT','9:16']]},
     {id:'bibigo2',cat:'SHORT FORM',brand:'bibigo',grad:'135deg,#2e2633,#0f0f0f',yt:'uC4rnrKzNTE',title:'bibigo Social Short 02',genre:'9:16 세로형',type:'CLIENT PROJECT',status:'RELEASED',role:'Concept · AI Video · Edit',desc:'세로형 소셜 규격에 맞춰 후킹 중심으로 제작한 브랜드 숏폼입니다.',meta:[['GENRE','Social Short'],['FORMAT','9:16']]}
   ];
   const byId=Object.fromEntries(WORKS.map(w=>[w.id,w]));
-  const CHIPS={aifilm:['mia80','dont-sleep','maeh'],commercial:['kbo'],brandfilm4dx:['brandfilm4dx'],longform:['citizen','awake'],shortform:['bibigo1','bibigo2']};
+  const CHIPS={aifilm:['mia80','dont-sleep','maeh'],commercial:['kbo'],brandfilm4dx:['brandfilm4dx','thumbelina'],longform:['citizen','awake'],shortform:['bibigo1','bibigo2']};
 
   const chips=[...document.querySelectorAll('.chip')];
   const showcase=document.getElementById('showcase');
